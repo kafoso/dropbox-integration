@@ -21,7 +21,8 @@ data/files
 !data/files/README.md
 system/config/*.php
 !system/config/definitions.php
-system/config/auth
+system/config/auth/*
+!system/config/auth/*.example.json
 
 # Composer vendor
 system/library/composer/vendor
