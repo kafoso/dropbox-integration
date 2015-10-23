@@ -2,6 +2,7 @@
 namespace System\MVC\Controller;
 
 use Application\MVC\Model\DropboxIntegration\Authenticator;
+use System\MVC\Model\ViewModel;
 
 abstract class SystemController {
 	protected $server;
@@ -31,13 +32,22 @@ abstract class SystemController {
 	}
 
 	public function respondWithError($statusCode, $statusMessage, $body = ""){
+		$title = sprintf("%s %s", $statusCode, $statusMessage);
+
+		$view = new ViewModel;
+		$view->setTemplateFilePath(ROOT_PATH . "/application/MVC/View/error/500.phtml");
+		$view->title = $title;
+		$view->content = $body;
+
+		$layout = new ViewModel;
+		$layout->setTemplateFilePath(ROOT_PATH . "/application/MVC/View/layout/default.phtml");
+		$layout->title = $title;
+		$layout->content = $view->render();
+
 		$proto = $this->server['SERVER_PROTOCOL'];
     header("$proto $statusCode $statusMessage", true, $statusCode);
-		$output = "<h1>{$statusMessage}</h1>";
-		if ($body) {
-			$output .= "<p>{$body}</p>";
-		}
-		die($outuput);
+		header("Content-Type: text/html; charset=utf-8", true);
+		die($layout->render());
 	}
 
 	public function getUrlArray(){
