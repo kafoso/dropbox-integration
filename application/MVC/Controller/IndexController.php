@@ -69,9 +69,13 @@ class IndexController extends SystemController {
 		$dropboxClient = $this->getDropboxClient();
 		$entry = $dropboxClient->getMetadataWithChildren($dropboxPath);
 
-		$layout = new ViewModel;
-		$layout->setTemplateFilePath(__DIR__ . "/../View/layout/default.phtml");
-		$layout->title = $entry["path"];
+		if (!$entry) {
+			$errorMsg = htmlentities(sprintf(
+				"File on path \"%s\" does not exist!",
+				$dropboxPath
+			));
+			$this->respondWithError(404, "Not Found", $errorMsg);
+		}
 
 		$view = new ViewModel;
 		$view->entry = $entry;
