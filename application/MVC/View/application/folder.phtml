@@ -6,6 +6,9 @@
 <h1 style="margin:0 0 5px;"><?=$this->entry["path"]?></h1>
 <small style="color:#777;font-size:14px;">Folder</small>
 <br/>
+<?php if ($this->pathOneLevelUp) { ?>
+	Back: <a href="<?=$this->urlOneLevelUp?>"><?=$this->pathOneLevelUp?></a>
+<?php } ?>
 <br/>
 <?php
 foreach ($this->entry['contents'] as $child) {

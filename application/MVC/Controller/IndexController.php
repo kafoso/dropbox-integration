@@ -80,6 +80,8 @@ class IndexController extends SystemController {
 		$view = new ViewModel;
 		$view->entry = $entry;
 		$view->pathView = $this->getPath();
+		$view->pathOneLevelUp = dirname($dropboxPath);
+		$view->urlOneLevelUp = $this->getBaseURL() . "/view?path=" . htmlentities($view->pathOneLevelUp);
 
 		if ($entry["is_dir"]) {
 			$view->setTemplateFilePath(ROOT_PATH . "/application/MVC/View/application/folder.phtml");
