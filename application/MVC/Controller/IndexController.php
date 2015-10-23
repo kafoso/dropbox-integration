@@ -71,7 +71,7 @@ class IndexController extends SystemController {
 
 		if (!$entry) {
 			$errorMsg = htmlentities(sprintf(
-				"File on path \"%s\" does not exist!",
+				"File or folder on path \"%s\" does not exist!",
 				$dropboxPath
 			));
 			$this->respondWithError(404, "Not Found", $errorMsg);
