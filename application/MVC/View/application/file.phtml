@@ -1,0 +1,10 @@
+<h1 style="margin:0 0 5px;"><?=$this->entry["path"]?></h1>
+<small style="color:#777;font-size:14px;">File</small>
+<br/>
+<br/>
+<?php
+$metadataStr = htmlspecialchars(print_r($this->entry, true));
+$downloadPath = $this->pathDownload . "?path=".htmlspecialchars($this->entry['path']);
+?>
+<pre><?=$metadataStr?></pre>
+<a href="<?=$downloadPath?>" class="download">Download this file</a>

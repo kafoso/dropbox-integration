@@ -1,0 +1,79 @@
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" src="http://blueimp.github.io/jQuery-File-Upload/js/vendor/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="http://blueimp.github.io/jQuery-File-Upload/js/jquery.iframe-transport.js"></script>
+<script type="text/javascript" src="http://blueimp.github.io/jQuery-File-Upload/js/jquery.fileupload.js"></script>
+
+<h1 style="margin:0 0 5px;"><?=$this->entry["path"]?></h1>
+<small style="color:#777;font-size:14px;">Folder</small>
+<br/>
+<br/>
+<?php
+foreach ($this->entry['contents'] as $child) {
+	$cp = $child['path'];
+  $cn = basename($cp) . (($child['is_dir']) ? "/" : "");
+  $cp = htmlspecialchars($cp);
+  $link = $this->pathView . "?path=".htmlspecialchars($cp);
+?>
+	<div><a style="text-decoration:none;" href="<?=$link?>"><?=$cn?></a></div>
+<?php } ?>
+<br/>
+<br/>
+<h2>Upload</h2>
+<label for="fileupload">Upload file:</label> <input id="fileupload" name="file" type="file">
+<div id="uploadProgress" style="position:relative;width:320px;height:24px;border:1px solid #7399F9;box-shadow:inset 0 0 8px #78d;overflow:hidden;">
+	<div class="bar" style="background-color:#9bf;height:100%;width:0%;opacity:.5"></div>
+	<div class="number" style="position:absolute;z-index:2;top:0;left:0;width:100%;height:24px;line-height:24px;text-align:center;font-family:Verdana;font-size:16px;text-shadow:-1px -1px 2px 2px #ddd;">0%</div>
+</div>
+<script type="text/javascript">
+$(function(){
+	var updateProgressBar = function(percentage){
+		percentage = Math.round(Math.min(percentage, 100));
+		$("#uploadProgress > div.bar").css({width:percentage+"%"});
+		$("#uploadProgress > div.number").text(percentage+"%");
+	};
+	var startPostUploadProgressBar = function(time, min){
+		var remainder = Math.min(100, ((100 - min)+1));
+		updateProgressBar(remainder);
+		if (remainder == 100) {
+			return;
+		}
+		setInterval(function(){
+			startPostUploadProgressBar(time, remainder);
+		},20);
+	};
+	var time;
+	$('#fileupload').fileupload({
+		url: "<?=$this->uploadUrl?>",
+		type: "POST",
+		dataType: "json",
+		autoUpload : false,
+		maxFileSize: <?=$this->uploadMaxFilesize?>,
+		add: function(e, data){
+			console.log("File added: ", data.files[0].name);
+			time = (new Date()).getMilliseconds();
+			data.submit();
+		},
+		done: function (e, data) {
+			console.log("Upload successful. Reloading page...");
+			time = (new Date()).getMilliseconds()-time;
+			updateProgressBar(100);
+			//window.location.reload();
+		},
+		progressall: function (e, data) {
+			var progress = parseInt(data.loaded / data.total * 100, 10);
+			console.log("progress", progress+"%");
+			var halfProgress = progress/2;
+			if (progress == 100) {
+				time = (new Date()).getMilliseconds()-time;
+				startPostUploadProgressBar(time, halfProgress);
+			}
+			else {
+				updateProgressBar(halfProgress);
+			}
+		},
+		fail: function(e){
+			console.error("Upload failed: ", e);
+		}
+	}).prop('disabled', !$.support.fileInput);
+});
+</script>
