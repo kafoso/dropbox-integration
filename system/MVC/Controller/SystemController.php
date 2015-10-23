@@ -1,8 +1,12 @@
 <?php
 namespace System\MVC\Controller;
 
+use Application\MVC\Model\DropboxIntegration\Authenticator;
+
 abstract class SystemController {
 	protected $server;
+	protected $session;
+	protected $request;
 	protected $authenticator;
 
 	private $_urlArray;
@@ -13,8 +17,16 @@ abstract class SystemController {
 	private $_queryArray;
 	private $_fragment;
 
-	public function __construct(array $server, $authenticator){
-		$this->server = $server;
+	/**
+	 * @param $server					(Array) Normally $_SERVER
+	 * @param $session				(Array) Normally $_SESSION
+	 * @param $request				(Array) Normally $_REQUEST
+	 * @param $authenticator	(Object)
+	 */
+	public function __construct(array &$server, array &$session, array &$request, Authenticator $authenticator){
+		$this->server = &$server;
+		$this->session = &$session;
+		$this->request = &$request;
 		$this->authenticator = $authenticator;
 	}
 

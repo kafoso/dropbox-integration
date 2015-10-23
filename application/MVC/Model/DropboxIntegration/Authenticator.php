@@ -3,8 +3,9 @@ namespace Application\MVC\Model\DropboxIntegration;
 
 class Authenticator {
 	protected $appInfo;
+	protected $session;
 
-	public function __construct($appInfoFilePath){
+	public function __construct($appInfoFilePath, &$session){
 		try {
 				$appInfo = \Dropbox\AppInfo::loadFromJsonFile($appInfoFilePath);
 		}
@@ -12,6 +13,7 @@ class Authenticator {
 				throw new Exception("Unable to load \"$appInfoFilePath\": " . $ex->getMessage());
 		}
 		$this->appInfo = $appInfo;
+		$this->session = &$session;
 	}
 
 	public function getAppInfo(){
@@ -19,11 +21,11 @@ class Authenticator {
 	}
 
 	public function isAuthenticated(){
-		return isset($_SESSION['access-token']);
+		return isset($this->session['access-token']);
 	}
 
 	public function getWebAuth($redirectUri){
-		$csrfTokenStore = new \Dropbox\ArrayEntryStore($_SESSION, 'dropbox-auth-csrf-token');
+		$csrfTokenStore = new \Dropbox\ArrayEntryStore($this->session, 'dropbox-auth-csrf-token');
 		return new \Dropbox\WebAuth(
 			$this->getAppInfo(),
 			$this->getClientIdentifier(),

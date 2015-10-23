@@ -52,13 +52,13 @@ class IndexController extends SystemController {
 		catch (dbx\Exception $ex) {
 			$this->respondWithError(500, "Internal Server Error");
 		}
-		$_SESSION['access-token'] = $accessToken;
+		$this->session['access-token'] = $accessToken;
 		header("Location: " . $this->getBaseURL() . "/view");
 		die;
 	}
 
 	public function logout(){
-		unset($_SESSION['access-token']);
+		unset($this->session['access-token']);
 		$this->redirectToIndex();
 	}
 
@@ -159,7 +159,7 @@ class IndexController extends SystemController {
 	protected function getDropboxClient(){
 		if (!$this->dropboxClient) {
 			$this->dropboxClient =  new \Dropbox\Client(
-				$_SESSION['access-token'],
+				$this->session['access-token'],
 				$this->authenticator->getClientIdentifier(),
 				null,
 				$this->authenticator->getAppInfo()->getHost()

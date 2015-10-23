@@ -29,9 +29,17 @@ if (!file_exists($appInfoFilePath)) {
 	));
 }
 
-$authenticator = new \Application\MVC\Model\DropboxIntegration\Authenticator($appInfoFilePath);
+$authenticator = new \Application\MVC\Model\DropboxIntegration\Authenticator(
+	$appInfoFilePath,
+	$_SESSION
+);
 
-$controller = new \Application\MVC\Controller\IndexController($_SERVER, $authenticator);
+$controller = new \Application\MVC\Controller\IndexController(
+	$_SERVER,
+	$_SESSION,
+	$_REQUEST,
+	$authenticator
+);
 
 $path = preg_replace("/\/$/", "", $uriArray["path"]);
 
