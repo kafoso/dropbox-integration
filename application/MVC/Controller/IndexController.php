@@ -80,18 +80,24 @@ class IndexController extends SystemController {
 		$view = new ViewModel;
 		$view->entry = $entry;
 		$view->pathView = $this->getPath();
+
 		if ($entry["is_dir"]) {
-			$view->setTemplateFilePath(__DIR__ . "/../View/application/folder.phtml");
+			$view->setTemplateFilePath(ROOT_PATH . "/application/MVC/View/application/folder.phtml");
 			$view->uploadUrl = $this->getBaseURL() . "/upload";
 			$view->uploadFolderPath = $entry["path"];
 			$view->uploadMaxFilesize = Uploader::getUploadMaxFilesize();
 		} else {
-			$view->setTemplateFilePath(__DIR__ . "/../View/application/file.phtml");
+			$view->setTemplateFilePath(ROOT_PATH . "/application/MVC/View/application/file.phtml");
 			$view->pathDownload = "/dropbox-integration/download";
 		}
+
+		$layout = new ViewModel;
+		$layout->setTemplateFilePath(ROOT_PATH . "/application/MVC/View/layout/default.phtml");
+		$layout->title = $entry["path"];
 		$layout->content = $view->render();
-		echo $layout->render();
-		die;
+
+		header("Content-Type: text/html; charset=utf-8", true);
+		die($layout->render());
 	}
 
 	public function download(){
